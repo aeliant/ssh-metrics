@@ -69,7 +69,3 @@ def cli(**kwargs):
     if kwargs.get('failed_passwords', False):
         failed_passwords = ssh_auth.failed_passwords
         
-
-# pylint: disable=no-value-for-parameter
-if __name__ == '__main__':
-    cli()
