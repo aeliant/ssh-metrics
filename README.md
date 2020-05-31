@@ -1,4 +1,6 @@
 # SSH Metrics
+/!\ WARNING: Still in development
+
 `ssh-metrics` is a python command line script allowing the user to read an SSH Auth. log file and return some metrics from it.
 
 ## Requirements
