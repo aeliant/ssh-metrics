@@ -18,5 +18,5 @@ def version_option_test():
     runner = CliRunner()
 
     result = runner.invoke(cli, ['--version'])
-    assert 0 == result.exit_code
+    assert 0 == result.exit_code, result.output
     assert 'X.Y.Z' in result.output
