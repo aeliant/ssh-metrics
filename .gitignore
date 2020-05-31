@@ -1,2 +1,6 @@
 *.egg-info/
 /auth.log.1
+
+# build environment
+/build
+/dist
