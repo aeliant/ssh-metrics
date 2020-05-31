@@ -1,9 +1,0 @@
-README.md
-setup.py
-aeliant_ssh_metrics.egg-info/PKG-INFO
-aeliant_ssh_metrics.egg-info/SOURCES.txt
-aeliant_ssh_metrics.egg-info/dependency_links.txt
-aeliant_ssh_metrics.egg-info/entry_points.txt
-aeliant_ssh_metrics.egg-info/requires.txt
-aeliant_ssh_metrics.egg-info/top_level.txt
-ssh_metrics/__init__.py

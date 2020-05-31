@@ -1,3 +1,0 @@
-[console_scripts]
-ssh-metrics = ssh_metrics.__init__:cli
-

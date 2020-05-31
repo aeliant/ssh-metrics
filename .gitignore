@@ -1,1 +1,2 @@
+*.egg-info/
 /auth.log.1
