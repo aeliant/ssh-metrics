@@ -1,6 +1,12 @@
-*.egg-info/
+# Dev environment
 /auth.log.1
+/.vscode
+
+# Python compiled files
+__pycache__
+
 
 # build environment
+*.egg-info/
 /build
 /dist
