@@ -17,6 +17,7 @@ def version_option_test():
     """Check that the version option return the correct version of the script."""
     runner = CliRunner()
 
-    result = runner.invoke(cli, ['--version'])
-    assert 0 == result.exit_code, result.output
-    assert 'X.Y.Z' in result.output
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ['--version'])
+        assert 0 == result.exit_code, result.output
+        assert 'X.Y.Z' in result.output
