@@ -20,7 +20,7 @@ __author__ = 'Hamza ESSAYEGH'
 @click.option('--format', '-f', help='Report format, default to txt', type=click.Choice(['txt', 'csv', 'json']), default='txt')
 @click.option('--output', '-f', help='Output destination, default to /tmp', type=click.Path(exists=True), default='/tmp')
 @click.option('--date', '-d', help='Date for which you want to retrieve metrics. Default for yesterday', type=click.DateTime(formats=['%m/%d/%Y']), default=datetime.strftime(datetime.now() + timedelta(days=-1), '%m/%d/%Y'))
-@click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'), default='/var/log/auth.log')
+@click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'))
 @click.option('--failed-passwords', help='Return statistics for failed passwords. Can be prefixed with --country-stats', is_flag=True)
 @click.option('--country-stats', help='Return countries statistics.', is_flag=True)
 def cli(**kwargs):
