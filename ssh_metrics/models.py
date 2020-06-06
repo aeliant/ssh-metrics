@@ -1,6 +1,9 @@
 """@package ssh_metrics.models
 
 Model used for storing SSH auth. infos."""
+import inflection
+
+from tabulate import tabulate
 from subprocess import Popen, PIPE
 
 from .regexes import FAILED_PASS_REGEX
@@ -10,12 +13,13 @@ class SSHAuth:
     
     day = None
     hostname = None
-    logs = []
+    logs = None
 
     def __init__(self, **kwargs):
         """Initialize the SSHAuth object with the day and hostname."""
         self.day = kwargs.get('day', None)
         self.hostname = kwargs.get('hostname', None)
+        self.logs = []
 
     def add_log(self, time, message):
         """Add a log to messages."""
@@ -28,8 +32,7 @@ class SSHAuth:
     def pretty_messages(self):
         return [f"{_.get('time')}: {_.get('message')}" for _ in self.logs]
     
-    @property
-    def failed_passwords(self):
+    def failed_passwords(self, country_stats=False):
         """Return metrics for failed password."""
         failed = []
         for message in self.logs:
@@ -43,4 +46,58 @@ class SSHAuth:
                     'src_ip': match.group(2),
                     'src_geoip': output.decode().split(':')[1].strip()
                 })
+        
+        if country_stats:
+            stats = {}
+            for element in failed:
+                if element.get('src_geoip') in stats:
+                    stats[element.get('src_geoip')] += 1
+                else:
+                    stats[element.get('src_geoip')] = 1
+            return stats
+
         return failed
+    
+    def failed_passwords_report(self, country_stats=False, format='json'):
+        """Generate a report content with the specified format for failed passwords.
+
+        Valid formats:
+        *  json
+        *  csv
+        *  txt
+        
+        If format is not recognized, return None"""
+        if format == 'json':
+            return self.failed_passwords(country_stats=country_stats)
+        elif format == 'csv':
+            stats = self.failed_passwords(country_stats=country_stats)
+            if country_stats:
+                headers = ['GeoIP', 'Count']
+                data = [';'.join([key, str(value)]) for key, value in stats.items()]
+                return ';'.join(headers) + '\n' + '\n'.join(data)
+            else:
+                headers = [inflection.humanize(_) for _ in stats[0].keys()]
+                data = [
+                    ';'.join([value for key, value in _.items()])
+                    for _ in stats
+                ]
+                return ';'.join(headers) + '\n' + '\n'.join(data)
+        elif format == 'txt':
+            stats = self.failed_passwords(country_stats=country_stats)
+            if len(stats) == 0:
+                return []
+
+            if country_stats:
+                headers = ['GeoIP', 'Count']
+                data = stats.items()
+                return tabulate(data, headers=headers)
+            else:
+                print(stats)
+                headers = [inflection.humanize(_) for _ in stats[0].keys()]
+                data = [
+                    [value for key, value in _.items()]
+                    for _ in stats
+                ]
+                return tabulate(data, headers=headers)
+        else:
+            return None

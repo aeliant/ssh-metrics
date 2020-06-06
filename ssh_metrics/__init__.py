@@ -41,7 +41,7 @@ def cli(**kwargs):
                 ssh_auth.hostname = match.group(2)
             ssh_auth.add_log(time=match.group(1), message=match.group(4))
 
+    # generating report for failed passwords
     if kwargs.get('failed_passwords', False):
-        failed_passwords = ssh_auth.failed_passwords
-        print(failed_passwords)
-        
+        report = ssh_auth.failed_passwords_report(country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
+        print(report)

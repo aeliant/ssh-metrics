@@ -21,7 +21,11 @@ setup(
     ],
     packages=['ssh_metrics'],
     include_package_data=True,
-    install_requires=['click'],
+    install_requires=[
+        'click',
+        'inflection',
+        'tabulate'
+    ],
     entry_points={
         'console_scripts': [
             'ssh-metrics=ssh_metrics.__init__:cli'
