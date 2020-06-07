@@ -6,7 +6,7 @@ README = (CURRENT_DIR / 'README.md').read_text()
 
 setup(
     name='aeliant-ssh-metrics',
-    verion='0.1.0',
+    version='0.1.0',
     description='Gather SSH metrics from syslog files',
     long_description=README,
     long_description_content_type='text/markdown',
