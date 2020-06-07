@@ -11,7 +11,7 @@ from .models import SSHAuth
 from .regexes import MAIN_REGEX
 
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 __author__ = 'Hamza ESSAYEGH'
 
 
@@ -21,7 +21,8 @@ __author__ = 'Hamza ESSAYEGH'
 @click.option('--output', '-f', help='Output destination, default to /tmp', type=click.Path(exists=True), default='/tmp')
 @click.option('--date', '-d', help='Date for which you want to retrieve metrics. Default for yesterday', type=click.DateTime(formats=['%m/%d/%Y']), default=datetime.strftime(datetime.now() + timedelta(days=-1), '%m/%d/%Y'))
 @click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'))
-@click.option('--failed-passwords', help='Return statistics for failed passwords. Can be prefixed with --country-stats', is_flag=True)
+@click.option('--failed-passwords', help='Return statistics for failed passwords. Can be combined with --country-stats', is_flag=True)
+@click.option('--invalid-users', help='Return statistics for invalid users. Can be combined with --country-stats', is_flag=True)
 @click.option('--country-stats', help='Return countries statistics.', is_flag=True)
 def cli(**kwargs):
     """Retrieve metrics for SSH connections and generate reports"""
@@ -43,5 +44,10 @@ def cli(**kwargs):
 
     # generating report for failed passwords
     if kwargs.get('failed_passwords', False):
-        report = ssh_auth.failed_passwords_report(country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
+        report = ssh_auth.report(SSHAuth.FAILED_PASSWORDS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
+        print(report)
+    
+    # generating report for invalid users
+    if kwargs.get('invalid_users', False):
+        report = ssh_auth.report(SSHAuth.INVALID_USERS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
         print(report)
