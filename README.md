@@ -1,5 +1,5 @@
 # SSH Metrics
-/!\ WARNING: Still in development
+[![Build Status](https://travis-ci.com/aeliant/ssh-metrics.svg?branch=master)](https://travis-ci.com/aeliant/ssh-metrics)
 
 `ssh-metrics` is a python command line script allowing the user to read an SSH Auth. log file and return some metrics from it.
 
