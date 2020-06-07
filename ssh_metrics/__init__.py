@@ -18,7 +18,8 @@ __author__ = 'Hamza ESSAYEGH'
 def _write_to_output(data, output, format='txt'):
     if format == 'txt' or format == 'csv':
         with open(output, 'w') as _f:
-            _f.write(data)
+            if len(data) > 0:
+                _f.write(data)
             _f.write('\n')
     elif format == 'json':
         json.dump(data, open(output, 'w'), indent=4)
@@ -44,7 +45,7 @@ def cli(**kwargs):
         day = datetime.strftime(kwargs.get('date'), '%b %d')
         REG = re.compile(r'(?P<day>{day})\s'.format(day=day) + MAIN_REGEX)
     else:
-        REG = re.compile(r'(?P<day>.*)' + MAIN_REGEX)
+        REG = re.compile(r'(?P<day>\w+\s*\d+\s*)' + MAIN_REGEX)
 
     ssh_auth = SSHAuth()
     for line in kwargs.get('log_file').readlines():
