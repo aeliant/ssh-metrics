@@ -15,10 +15,19 @@ __version__ = '0.0.1'
 __author__ = 'Hamza ESSAYEGH'
 
 
+def _write_to_output(data, output, format='txt'):
+    if format == 'txt' or format == 'csv':
+        with open(output, 'w') as _f:
+            _f.write(data)
+            _f.write('\n')
+    elif format == 'json':
+        json.dump(data, open(output, 'w'), indent=4)
+
+
 @click.command()
 @click.option('--version', '-v', help='Print version and exit.', is_flag=True)
 @click.option('--format', '-f', help='Report format, default to txt', type=click.Choice(['txt', 'csv', 'json']), default='txt')
-@click.option('--output', '-f', help='Output destination, default to /tmp', type=click.Path(exists=True), default='/tmp')
+@click.option('--output', '-o', help='Output destination, default to stdout', default='stdout')
 @click.option('--date', '-d', help='Date for which you want to retrieve metrics. Default for yesterday', type=click.DateTime(formats=['%m/%d/%Y']), default=datetime.strftime(datetime.now() + timedelta(days=-1), '%m/%d/%Y'))
 @click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'))
 @click.option('--failed-passwords', help='Return statistics for failed passwords. Can be combined with --country-stats', is_flag=True)
@@ -46,14 +55,25 @@ def cli(**kwargs):
     # generating report for failed passwords
     if kwargs.get('failed_passwords', False):
         report = ssh_auth.report(SSHAuth.FAILED_PASSWORDS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
-        print(report)
+        if kwargs.get('output') == 'stdout':
+            print(report)
+        else:
+            _write_to_output(report, kwargs.get('output'), format=kwargs.get('format'))
+
     
     # generating report for invalid users
     if kwargs.get('invalid_users', False):
         report = ssh_auth.report(SSHAuth.INVALID_USERS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
-        print(report)
+        if kwargs.get('output') == 'stdout':
+            print(report)
+        else:
+            _write_to_output(report, kwargs.get('output'), format=kwargs.get('format'))
     
     # generating report for accepted connections
     if kwargs.get('accepted_connections', False):
         report = ssh_auth.report(SSHAuth.ACCEPTED_CONNECTIONS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
-        print(report)
+        if kwargs.get('output') == 'stdout':
+            print(report)
+        else:
+            _write_to_output(report, kwargs.get('output'), format=kwargs.get('format'))
+
