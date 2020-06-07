@@ -1,4 +1,4 @@
-.PHONY: clean build publish
+.PHONY: clean build publish patch minor major
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -8,3 +8,12 @@ build:
 
 publish:
 	twine upload dist/*
+
+patch:
+	bumpversion patch
+
+minor:
+	bumpversion minor
+
+major:
+	bumpversion major
