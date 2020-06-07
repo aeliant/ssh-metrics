@@ -1,5 +1,5 @@
 # Dev environment
-/auth.log.1
+/auth.log.*
 /.vscode
 
 # Python compiled files

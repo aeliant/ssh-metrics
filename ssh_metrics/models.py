@@ -6,13 +6,14 @@ import inflection
 from tabulate import tabulate
 from subprocess import Popen, PIPE
 
-from .regexes import FAILED_PASS_REGEX, INVALID_USER_REGEX
+from .regexes import FAILED_PASS_REGEX, INVALID_USER_REGEX, ACCEPTED_CONNECTION_REGEX
 
 class SSHAuth:
     """SSH Authentication model to be used for gathering metrics."""
 
     FAILED_PASSWORDS = 0
     INVALID_USERS = 1
+    ACCEPTED_CONNECTIONS = 2
     
     day = None
     hostname = None
@@ -87,6 +88,34 @@ class SSHAuth:
         
         return failed
     
+    def accepted_connections(self, country_stats=False):
+        """Return metrics for accepted connections."""
+        accepted = []
+        for message in self.logs:
+            match = ACCEPTED_CONNECTION_REGEX.match(message.get('message'))
+            if match:
+                geoip_info = Popen(['geoiplookup', match.group(3)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                output, _ = geoip_info.communicate()
+                accepted.append({
+                    'time': message.get('time'),
+                    'user': match.group(2),
+                    'auth': match.group(1),
+                    'src_ip': match.group(3),
+                    'src_geoip': output.decode().split(':')[1].strip()
+                })
+        
+        if country_stats:
+            stats = {}
+            for element in accepted:
+                if element.get('src_geoip') in stats:
+                    stats[element.get('src_geoip')] += 1
+                else:
+                    stats[element.get('src_geoip')] = 1
+            
+            return stats
+        
+        return accepted
+    
     def _gen_report(self, data, format, country_stats):
         """For a given set of data, format and country_stats, return the corresponding report."""
         # first checking if any data
@@ -134,6 +163,7 @@ class SSHAuth:
         Valid metric types:
         *  failed_passwords
         *  invalid_users
+        *  accepted_connections
 
         If format or metric_type is not recognized, return None
         """
@@ -143,51 +173,10 @@ class SSHAuth:
         elif metric_type == self.INVALID_USERS:
             stats = self.invalid_users(country_stats=country_stats)
             data = self._gen_report(stats, format=format, country_stats=country_stats)
+        elif metric_type == self.ACCEPTED_CONNECTIONS:
+            stats = self.accepted_connections(country_stats=country_stats)
+            data = self._gen_report(stats, format=format, country_stats=country_stats)
         else:
             return None
         
         return data
-    
-    def failed_passwords_report(self, country_stats=False, format='json'):
-        """Generate a report content with the specified format for failed passwords.
-
-        Valid formats:
-        *  json
-        *  csv
-        *  txt
-        
-        If format is not recognized, return None"""
-        if format == 'json':
-            return self.failed_passwords(country_stats=country_stats)
-        elif format == 'csv':
-            stats = self.failed_passwords(country_stats=country_stats)
-            if country_stats:
-                headers = ['GeoIP', 'Count']
-                data = [';'.join([key, str(value)]) for key, value in stats.items()]
-                return ';'.join(headers) + '\n' + '\n'.join(data)
-            else:
-                headers = [inflection.humanize(_) for _ in stats[0].keys()]
-                data = [
-                    ';'.join([value for key, value in _.items()])
-                    for _ in stats
-                ]
-                return ';'.join(headers) + '\n' + '\n'.join(data)
-        elif format == 'txt':
-            stats = self.failed_passwords(country_stats=country_stats)
-            if len(stats) == 0:
-                return []
-
-            if country_stats:
-                headers = ['GeoIP', 'Count']
-                data = stats.items()
-                return tabulate(data, headers=headers)
-            else:
-                print(stats)
-                headers = [inflection.humanize(_) for _ in stats[0].keys()]
-                data = [
-                    [value for key, value in _.items()]
-                    for _ in stats
-                ]
-                return tabulate(data, headers=headers)
-        else:
-            return None

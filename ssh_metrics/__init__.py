@@ -23,6 +23,7 @@ __author__ = 'Hamza ESSAYEGH'
 @click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'))
 @click.option('--failed-passwords', help='Return statistics for failed passwords. Can be combined with --country-stats', is_flag=True)
 @click.option('--invalid-users', help='Return statistics for invalid users. Can be combined with --country-stats', is_flag=True)
+@click.option('--accepted-connections', help='Return statistics for accepted connections. Can be combined with --country-stats', is_flag=True)
 @click.option('--country-stats', help='Return countries statistics.', is_flag=True)
 def cli(**kwargs):
     """Retrieve metrics for SSH connections and generate reports"""
@@ -50,4 +51,9 @@ def cli(**kwargs):
     # generating report for invalid users
     if kwargs.get('invalid_users', False):
         report = ssh_auth.report(SSHAuth.INVALID_USERS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
+        print(report)
+    
+    # generating report for accepted connections
+    if kwargs.get('accepted_connections', False):
+        report = ssh_auth.report(SSHAuth.ACCEPTED_CONNECTIONS, country_stats=kwargs.get('country_stats'), format=kwargs.get('format'))
         print(report)
