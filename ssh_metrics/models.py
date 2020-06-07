@@ -25,9 +25,10 @@ class SSHAuth:
         self.hostname = kwargs.get('hostname', None)
         self.logs = []
 
-    def add_log(self, time, message):
+    def add_log(self, day, time, message):
         """Add a log to messages."""
         self.logs.append({
+            'day': day,
             'time': time,
             'message': message
         })
@@ -42,12 +43,13 @@ class SSHAuth:
         for message in self.logs:
             match = FAILED_PASS_REGEX.match(message.get('message'))
             if match:
-                geoip_info = Popen(['geoiplookup', match.group(2)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                geoip_info = Popen(['geoiplookup', match.group('src_ip')], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 output, _ = geoip_info.communicate()
                 failed.append({
+                    'day': message.get('day'),
                     'time': message.get('time'),
-                    'user': match.group(1),
-                    'src_ip': match.group(2),
+                    'user': match.group('user'),
+                    'src_ip': match.group('src_ip'),
                     'src_geoip': output.decode().split(':')[1].strip()
                 })
         
@@ -68,12 +70,13 @@ class SSHAuth:
         for message in self.logs:
             match = INVALID_USER_REGEX.match(message.get('message'))
             if match:
-                geoip_info = Popen(['geoiplookup', match.group(2)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                geoip_info = Popen(['geoiplookup', match.group('src_ip')], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 output, _ = geoip_info.communicate()
                 failed.append({
+                    'day': message.get('day'),
                     'time': message.get('time'),
-                    'user': match.group(1),
-                    'src_ip': match.group(2),
+                    'user': match.group('user'),
+                    'src_ip': match.group('src_ip'),
                     'src_geoip': output.decode().split(':')[1].strip()
                 })
         
@@ -94,13 +97,14 @@ class SSHAuth:
         for message in self.logs:
             match = ACCEPTED_CONNECTION_REGEX.match(message.get('message'))
             if match:
-                geoip_info = Popen(['geoiplookup', match.group(3)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                geoip_info = Popen(['geoiplookup', match.group('src_ip')], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 output, _ = geoip_info.communicate()
                 accepted.append({
+                    'day': message.get('day'),
                     'time': message.get('time'),
-                    'user': match.group(2),
-                    'auth': match.group(1),
-                    'src_ip': match.group(3),
+                    'user': match.group('user'),
+                    'auth': match.group('auth'),
+                    'src_ip': match.group('src_ip'),
                     'src_geoip': output.decode().split(':')[1].strip()
                 })
         

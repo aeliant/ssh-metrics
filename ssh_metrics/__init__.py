@@ -28,7 +28,7 @@ def _write_to_output(data, output, format='txt'):
 @click.option('--version', '-v', help='Print version and exit.', is_flag=True)
 @click.option('--format', '-f', help='Report format, default to txt', type=click.Choice(['txt', 'csv', 'json']), default='txt')
 @click.option('--output', '-o', help='Output destination, default to stdout', default='stdout')
-@click.option('--date', '-d', help='Date for which you want to retrieve metrics. Default for yesterday', type=click.DateTime(formats=['%m/%d/%Y']), default=datetime.strftime(datetime.now() + timedelta(days=-1), '%m/%d/%Y'))
+@click.option('--date', '-d', help='Date for which you want to retrieve metrics. Default for yesterday', type=click.DateTime(formats=['%m/%d/%Y']))
 @click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'))
 @click.option('--failed-passwords', help='Return statistics for failed passwords. Can be combined with --country-stats', is_flag=True)
 @click.option('--invalid-users', help='Return statistics for invalid users. Can be combined with --country-stats', is_flag=True)
@@ -40,17 +40,20 @@ def cli(**kwargs):
         click.echo(f'Aeliant - SSH Metrics - Version {__version__}')
         sys.exit(0)
 
-    day = datetime.strftime(kwargs.get('date'), '%b %d')
-    REG = re.compile(r'{day}\s'.format(day=day) + MAIN_REGEX)
+    if kwargs.get('date', None):
+        day = datetime.strftime(kwargs.get('date'), '%b %d')
+        REG = re.compile(r'(?P<day>{day})\s'.format(day=day) + MAIN_REGEX)
+    else:
+        REG = re.compile(r'(?P<day>.*)' + MAIN_REGEX)
 
-    ssh_auth = SSHAuth(day=day)
+    ssh_auth = SSHAuth()
     for line in kwargs.get('log_file').readlines():
         match = REG.match(line)
 
         if match:
             if not ssh_auth.hostname:
-                ssh_auth.hostname = match.group(2)
-            ssh_auth.add_log(time=match.group(1), message=match.group(4))
+                ssh_auth.hostname = match.group('hostname')
+            ssh_auth.add_log(day=match.group('day'), time=match.group('time'), message=match.group('message'))
 
     # generating report for failed passwords
     if kwargs.get('failed_passwords', False):
