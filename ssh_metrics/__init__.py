@@ -11,7 +11,7 @@ from .models import SSHAuth
 from .regexes import MAIN_REGEX
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.0'
 __author__ = 'Hamza ESSAYEGH'
 
 
