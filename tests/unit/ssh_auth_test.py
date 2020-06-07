@@ -20,13 +20,13 @@ def failed_passwords_test(mocked_popen):
     message = 'Failed password for invalid user darth.vader from 1.2.3.4 port 48302 ssh2'
 
     # init object and add log
-    obj = SSHAuth(hostname='coruscant', day='May 14')
-    obj.add_log(time, message)
+    obj = SSHAuth(hostname='coruscant')
+    obj.add_log('May 14', time, message)
 
     # checking failed passwords
     failed = obj.failed_passwords()
     assert len(failed) == 1
-    assert {'time', 'user', 'src_ip', 'src_geoip'} == set(failed[0].keys())
+    assert {'day', 'time', 'user', 'src_ip', 'src_geoip'} == set(failed[0].keys())
     assert '00:00:14' == failed[0].get('time')
     assert 'darth.vader' == failed[0].get('user')
     assert '1.2.3.4' == failed[0].get('src_ip')
@@ -50,13 +50,13 @@ def invalid_users_test(mocked_popen):
     message = 'Invalid user darth.vader from 1.2.3.4 port 48302'
 
     # init object and add log
-    obj = SSHAuth(hostname='kashyyk', day='May 14')
-    obj.add_log(time, message)
+    obj = SSHAuth(hostname='kashyyk')
+    obj.add_log('May 14', time, message)
 
     # checking invalid user
     failed = obj.invalid_users()
     assert len(failed) == 1
-    assert {'time', 'user', 'src_ip', 'src_geoip'} == set(failed[0].keys())
+    assert {'day', 'time', 'user', 'src_ip', 'src_geoip'} == set(failed[0].keys())
     assert '00:00:14' == failed[0].get('time')
     assert 'darth.vader' == failed[0].get('user')
     assert '1.2.3.4' == failed[0].get('src_ip')
@@ -82,13 +82,13 @@ def accepted_connections_test(mocked_popen):
     message2 = 'Accepted password for luke.skywalker from 1.2.3.5 port 4444 ssh2'
 
     # init object and add log
-    obj = SSHAuth(hostname='kashyyk', day='May 14')
-    obj.add_log(time, message)
-    obj.add_log(time2, message2)
+    obj = SSHAuth(hostname='kashyyk')
+    obj.add_log('May 14', time, message)
+    obj.add_log('May 14', time2, message2)
 
     # checking accepted connections
     failed = obj.accepted_connections()
-    assert {'time', 'user', 'auth', 'src_ip', 'src_geoip'} == set(failed[0].keys())
+    assert {'day', 'time', 'user', 'auth', 'src_ip', 'src_geoip'} == set(failed[0].keys())
     assert {'00:00:14', '00:00:15'} == set([_.get('time') for _ in failed])
     assert {'darth.vader', 'luke.skywalker'} == set([_.get('user') for _ in failed])
     assert {'publickey', 'password'} == set([_.get('auth') for _ in failed])
@@ -114,15 +114,15 @@ def failed_passwords_report_csv_test(mocked_popen):
     )
 
     # init object and add log
-    obj = SSHAuth(hostname='coruscant', day='May 14')
-    obj.add_log(time, message)
+    obj = SSHAuth(hostname='coruscant')
+    obj.add_log('May 14', time, message)
 
     # checking normal report
     report = obj.report(SSHAuth.FAILED_PASSWORDS, format='csv')
     assert isinstance(report, str), report
     report = report.split('\n')
-    assert {'Time', 'User', 'Src ip', 'Src geoip'} == set(report[0].split(';'))
-    assert {'00:00:14', 'darth.vader', '1.2.3.4', 'US, United States'} == set(report[1].split(';'))
+    assert {'Day', 'Time', 'User', 'Src ip', 'Src geoip'} == set(report[0].split(';'))
+    assert {'May 14', '00:00:14', 'darth.vader', '1.2.3.4', 'US, United States'} == set(report[1].split(';'))
 
     # checking with country stats
     report = obj.report(SSHAuth.FAILED_PASSWORDS, format='csv', country_stats=True)
