@@ -48,17 +48,17 @@ def failed_passwords_report_csv_test(mocked_popen):
     obj.add_log(time, message)
 
     # checking normal report
-    report = obj.failed_passwords_report(format='csv')
-    assert isinstance(report, str)
+    report = obj.report(SSHAuth.FAILED_PASSWORDS, format='csv')
+    assert isinstance(report, str), report
     report = report.split('\n')
     assert {'Time', 'User', 'Src ip', 'Src geoip'} == set(report[0].split(';'))
     assert {'00:00:14', 'darth.vader', '1.2.3.4', 'US, United States'} == set(report[1].split(';'))
 
     # checking with country stats
-    report = obj.failed_passwords_report(format='csv', country_stats=True)
+    report = obj.report(SSHAuth.FAILED_PASSWORDS, format='csv', country_stats=True)
     assert isinstance(report, str)
     report = report.split('\n')
     assert {'GeoIP', 'Count'} == set(report[0].split(';'))
     assert {'US, United States', '1'} == set(report[1].split(';'))
 
-    
+
