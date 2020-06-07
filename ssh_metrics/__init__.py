@@ -29,7 +29,7 @@ def _write_to_output(data, output, format='txt'):
 @click.option('--version', '-v', help='Print version and exit.', is_flag=True)
 @click.option('--format', '-f', help='Report format, default to txt', type=click.Choice(['txt', 'csv', 'json']), default='txt')
 @click.option('--output', '-o', help='Output destination, default to stdout', default='stdout')
-@click.option('--date', '-d', help='Date for which you want to retrieve metrics. Default for yesterday', type=click.DateTime(formats=['%m/%d/%Y']))
+@click.option('--date', '-d', help='Date for which you want to retrieve metrics. If not set, will scan for all the file without filter.', type=click.DateTime(formats=['%m/%d/%Y']))
 @click.option('--log-file', '-f', help='Auth file to parse. Default to /var/log/auth.log', type=click.File('r'))
 @click.option('--failed-passwords', help='Return statistics for failed passwords. Can be combined with --country-stats', is_flag=True)
 @click.option('--invalid-users', help='Return statistics for invalid users. Can be combined with --country-stats', is_flag=True)

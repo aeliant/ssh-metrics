@@ -23,8 +23,9 @@ Options:
   -v, --version                Print version and exit.
   -f, --format [txt|csv|json]  Report format, default to txt
   -o, --output TEXT            Output destination, default to stdout
-  -d, --date [%m/%d/%Y]        Date for which you want to retrieve metrics.
-                               Default for yesterday
+  -d, --date [%m/%d/%Y]        Date for which you want to retrieve metrics. If
+                               not set, will scan for all the file without
+                               filter.
 
   -f, --log-file FILENAME      Auth file to parse. Default to
                                /var/log/auth.log
@@ -40,7 +41,6 @@ Options:
 
   --country-stats              Return countries statistics.
   --help                       Show this message and exit.
-
 ```
 
 ## Features
