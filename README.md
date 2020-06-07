@@ -20,8 +20,9 @@ Usage: ssh-metrics [OPTIONS]
   Retrieve metrics for SSH connections and generate reports
 
 Options:
+  -v, --version                Print version and exit.
   -f, --format [txt|csv|json]  Report format, default to txt
-  -f, --output PATH            Output destination, default to /tmp
+  -o, --output TEXT            Output destination, default to stdout
   -d, --date [%m/%d/%Y]        Date for which you want to retrieve metrics.
                                Default for yesterday
 
@@ -29,7 +30,13 @@ Options:
                                /var/log/auth.log
 
   --failed-passwords           Return statistics for failed passwords. Can be
-                               prefixed with --country-stats
+                               combined with --country-stats
+
+  --invalid-users              Return statistics for invalid users. Can be
+                               combined with --country-stats
+
+  --accepted-connections       Return statistics for accepted connections. Can
+                               be combined with --country-stats
 
   --country-stats              Return countries statistics.
   --help                       Show this message and exit.
