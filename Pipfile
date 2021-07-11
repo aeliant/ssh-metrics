@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+click = "==7.1.2"
+inflection = "==0.4.0"
+tabulate = "==0.8.7"
+prometheus-client = "==0.11.0"
+
+[dev-packages]
+pytest = "*"
+mock = "*"
+
+[requires]
+python_version = "3.8"
