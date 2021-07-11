@@ -4,7 +4,9 @@ python:
 
 install:
 - sudo apt-get install geoip-bin
-- pip install -r requirements.txt -r requirements-dev.txt
+- pip install pipx
+- pipx install pipenv
+- pipenv install --dev --system
 
 script:
 - pytest
