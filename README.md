@@ -64,7 +64,7 @@ Time      User             Src ip           Src geoip
 
 For the same list but with country statistics:
 ```bash
-$ ssh-metrics -d 05/17/2020 --failed-passwords --format txt
+$ ssh-metrics -d 05/17/2020 --failed-passwords --country-stats --format txt
 GeoIP                     Count
 ----------------------  -------
 IT, Italy                    26
