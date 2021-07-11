@@ -122,3 +122,17 @@ For the same list but with country statistics:
 $ ssh-metrics -d 05/17/2020 --accepted-connections --format txt --country-stats
 
 ```
+# Testing
+First install `pipenv` using `pipx` (recommended method) and prepare your virtual environment:
+
+    pip install --user pipx
+    pipx install pipenv
+    pipenv shell
+    pipenv install --dev
+  
+You're ready to develop and test:
+
+    pytest -m "functional and not wip"
+    pytest -m "unit and not wip"
+
+Don't hesitate to create a pull request for any change.
