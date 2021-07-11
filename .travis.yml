@@ -4,8 +4,6 @@ python:
 
 install:
 - sudo apt-get install geoip-bin
-- pip install pipx
-- pipx install pipenv
 - pipenv install --dev --system
 
 script:
